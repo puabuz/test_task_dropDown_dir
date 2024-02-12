@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <h1>Дерево услуг</h1>
+    <style>
+      .parent {
+        cursor: pointer;
+      }
+
+      ul {
+        list-style-type: none;
+      }
+
+      .node {
+        margin-left: 20px;
+      }
+
+      .node.hidden {
+        display: none;
+      }
+      .node.visible {
+        display: block;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="dropdown"></div>
+    <script>
+      const data = {
+        services: [
+          {
+            id: 1,
+            head: null,
+            name: "Проф.осмотр",
+            node: 0,
+            price: 100.0,
+            sorthead: 20,
+          },
+          {
+            id: 2,
+            head: null,
+            name: "Хирургия",
+            node: 1,
+            price: 0.0,
+            sorthead: 10,
+          },
+          {
+            id: 3,
+            head: 2,
+            name: "Удаление зубов",
+            node: 1,
+            price: 0.0,
+            sorthead: 10,
+          },
+          {
+            id: 4,
+            head: 3,
+            name: "Удаление зуба",
+            node: 0,
+            price: 800.0,
+            sorthead: 10,
+          },
+          {
+            id: 5,
+            head: 3,
+            name: "Удаление 8ого зуба",
+            node: 0,
+            price: 1000.0,
+            sorthead: 30,
+          },
+          {
+            id: 6,
+            head: 3,
+            name: "Удаление осколка зуба",
+            node: 0,
+            price: 2000.0,
+            sorthead: 20,
+          },
+          {
+            id: 7,
+            head: 2,
+            name: "Хирургические вмешательство",
+            node: 0,
+            price: 200.0,
+            sorthead: 10,
+          },
+          {
+            id: 8,
+            head: 2,
+            name: "Имплантация зубов",
+            node: 1,
+            price: 0.0,
+            sorthead: 20,
+          },
+          {
+            id: 9,
+            head: 8,
+            name: "Коронка",
+            node: 0,
+            price: 3000.0,
+            sorthead: 10,
+          },
+          {
+            id: 10,
+            head: 8,
+            name: "Слепок челюсти",
+            node: 0,
+            price: 500.0,
+            sorthead: 20,
+          },
+        ],
+      };
+
+      // Функция для создания дропдауна
+      function dropDown(data, parentId, parentNode) {
+        const ul = document.createElement("ul"); // Создание элемента <ul>
+        ul.classList.add("node"); // Добавление класса 'node' к элементу <ul>
+        // Фильтрация и сортировка услуг по parentId и sorthead, создание элементов списка и их добавление к родительскому элементу
+        data.services
+          .filter((item) => item.head === parentId) // Фильтрация услуг по parentId
+          .sort((a, b) => a.sorthead - b.sorthead) // Сортировка услуг по полю sorthead
+          .forEach((item) => {
+            if (item.head === null) {
+              ul.classList.add("visible"); // Если услуга не имеет родителя, добавляем класс 'visible' для отображения
+            } else {
+              ul.classList.add("hidden"); // Если услуга имеет родителя, добавляем класс 'hidden' для скрытия
+            }
+            const li = document.createElement("li"); // Создание элемента <li>
+            li.textContent = `${item.name} (${item.price})`; // Установка текстового содержимого элемента <li>
+            ul.appendChild(li); // Добавление элемента <li> к элементу <ul>
+            if (item.node === 1) {
+              dropDown(data, item.id, li); // Рекурсивный вызов dropDown для создания вложенного дропдауна
+              li.classList.add("parent"); // Добавление класса 'parent' к родительским элементам
+            }
+          });
+        if (parentNode) {
+          parentNode.appendChild(ul); // Если задан родительский элемент, добавляем <ul> к нему
+        } else {
+          document.getElementById("dropdown").appendChild(ul); // Иначе добавляем <ul> к элементу с id "dropdown"
+        }
+      }
+
+      // Обработчик события клика для раскрытия/скрытия вложенного списка
+      document.addEventListener("click", function (event) {
+        const clickedElement = event.target; // Получаем элемент, на который кликнули
+        if (clickedElement.classList.contains("parent")) {
+          const ul = clickedElement.querySelector("ul"); // Получаем вложенный список, связанный с родительским элементом
+          ul.classList.toggle("visible"); // Переключаем класс 'visible' для раскрытия/скрытия списка
+        }
+      });
+
+      dropDown(data, null, null); // Вызов функции dropDown для создания дропдауна
+    </script>
+  </body>
+</html>
